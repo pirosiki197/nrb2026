@@ -6,6 +6,8 @@
 #   mysql       → MySQL 8.0 install + nrb2026 db + isucon user
 #   rustup      → rustup バイナリと toolchain 投入
 #   webapp      → webapp ソース配置 + 事前 cargo build + systemd unit (cargo run debug, :80)
+#   go          → Go toolchain を /usr/local/go に投入
+#   webapp-go   → Go 版 webapp 配置 + go build + systemd unit (:80、Rust 版の unit は disable)
 #   bench       → bench バイナリ + bench.sh 配置
 #
 # nginx / tls cookbook は nrb2026 では使わない (= webapp が axum で 80 番直配信、TLS なし)。
@@ -20,4 +22,6 @@ include_recipe '../cookbooks/users/isucon.rb'
 include_recipe '../cookbooks/mysql/default.rb'
 include_recipe '../cookbooks/rustup/default.rb'
 include_recipe '../cookbooks/webapp/default.rb'
+include_recipe '../cookbooks/go/default.rb'
+include_recipe '../cookbooks/webapp-go/default.rb'
 include_recipe '../cookbooks/bench/default.rb'

@@ -201,6 +201,13 @@ rsync -a --delete \
     "$ROOT/frontend/dist/" \
     "$PAYLOAD_DIR/mitamae/cookbooks/webapp/files/home/isucon/webapp/public/"
 
+# Go 版 webapp はソースだけ同梱し、AMI 上で go build する (Rust 版と同じ扱い)。
+echo "==> stage webapp-go source -> /home/isucon/webapp-go"
+mkdir -p "$PAYLOAD_DIR/mitamae/cookbooks/webapp-go/files/home/isucon"
+rsync -a --delete --exclude='/webapp-go' \
+    "$ROOT/webapp-go/" \
+    "$PAYLOAD_DIR/mitamae/cookbooks/webapp-go/files/home/isucon/webapp-go/"
+
 echo "==> stage bench binary + bench.sh -> /opt/bench"
 mkdir -p "$PAYLOAD_DIR/mitamae/cookbooks/bench/files/opt/bench"
 cp "$ROOT/target/release/bench" "$PAYLOAD_DIR/mitamae/cookbooks/bench/files/opt/bench/bench"
