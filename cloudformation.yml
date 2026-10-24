@@ -6,10 +6,10 @@ Parameters:
   AmiId:
     Type: String
     Default: "ami-XXXXXXXXXXXXXXXXX"
-  SetupToken:
+  GitHubUsers:
     Type: String
-    NoEcho: true
-    Default: "{{SETUP_TOKEN}}"
+    MinLength: 1
+    Description: isucon ユーザーの authorized_keys に https://github.com/<user>.keys を登録する GitHub ユーザー (空白区切り)
 
 Resources:
   VPC:
@@ -91,13 +91,10 @@ Resources:
         - Key: Name
           Value: nrb2026-bench
       UserData:
-        Fn::Base64: !Sub
-          - |
-            #cloud-config
-            runcmd:
-              - 'bash -c ''set -o pipefail; curl -fsS --retry 5 --retry-connrefused --retry-all-errors --max-time 10 --connect-timeout 5 -H "Authorization: Bearer ${SETUP_TOKEN}" "https://api.isunarabe.org/api/setup/authorized_keys" | sudo -u isucon sh -c "umask 077; cat >> /home/isucon/.ssh/authorized_keys"'''
-              - 'sudo SETUP_TOKEN="${SETUP_TOKEN}" /opt/benchwarmer/bootstrap.sh'
-          - SETUP_TOKEN: !Ref SetupToken
+        Fn::Base64: !Sub |
+          #cloud-config
+          runcmd:
+            - 'bash -c ''set -o pipefail; for u in ${GitHubUsers}; do curl -fsS --retry 5 --retry-connrefused --retry-all-errors --max-time 10 --connect-timeout 5 "https://github.com/$u.keys"; echo; done | sudo -u isucon sh -c "umask 077; cat >> /home/isucon/.ssh/authorized_keys"'''
   BenchmarkerInstanceIP:
     Type: AWS::EC2::EIP
     Properties:
@@ -124,14 +121,11 @@ Resources:
         - Key: Name
           Value: nrb2026-1
       UserData:
-        Fn::Base64: !Sub
-          - |
-            #cloud-config
-            runcmd:
-              - 'bash -c ''set -o pipefail; curl -fsS --retry 5 --retry-connrefused --retry-all-errors --max-time 10 --connect-timeout 5 -H "Authorization: Bearer ${SETUP_TOKEN}" "https://api.isunarabe.org/api/setup/authorized_keys" | sudo -u isucon sh -c "umask 077; cat >> /home/isucon/.ssh/authorized_keys"'''
-              - 'sudo INSTANCE_INDEX=0 ISUWARI_PUBLIC_IP="${PUBLIC_IP}" SETUP_TOKEN="${SETUP_TOKEN}" /opt/isuwari/bootstrap.sh'
-          - SETUP_TOKEN: !Ref SetupToken
-            PUBLIC_IP: !Ref QualifyInstanceIP1
+        Fn::Base64: !Sub |
+          #cloud-config
+          runcmd:
+            - 'bash -c ''set -o pipefail; for u in ${GitHubUsers}; do curl -fsS --retry 5 --retry-connrefused --retry-all-errors --max-time 10 --connect-timeout 5 "https://github.com/$u.keys"; echo; done | sudo -u isucon sh -c "umask 077; cat >> /home/isucon/.ssh/authorized_keys"'''
+            - 'rm -rf /opt/bench'
   QualifyInstanceIP1:
     Type: AWS::EC2::EIP
     Properties:
@@ -160,14 +154,11 @@ Resources:
         - Key: Name
           Value: nrb2026-2
       UserData:
-        Fn::Base64: !Sub
-          - |
-            #cloud-config
-            runcmd:
-              - 'bash -c ''set -o pipefail; curl -fsS --retry 5 --retry-connrefused --retry-all-errors --max-time 10 --connect-timeout 5 -H "Authorization: Bearer ${SETUP_TOKEN}" "https://api.isunarabe.org/api/setup/authorized_keys" | sudo -u isucon sh -c "umask 077; cat >> /home/isucon/.ssh/authorized_keys"'''
-              - 'sudo INSTANCE_INDEX=1 ISUWARI_PUBLIC_IP="${PUBLIC_IP}" SETUP_TOKEN="${SETUP_TOKEN}" /opt/isuwari/bootstrap.sh'
-          - SETUP_TOKEN: !Ref SetupToken
-            PUBLIC_IP: !Ref QualifyInstanceIP2
+        Fn::Base64: !Sub |
+          #cloud-config
+          runcmd:
+            - 'bash -c ''set -o pipefail; for u in ${GitHubUsers}; do curl -fsS --retry 5 --retry-connrefused --retry-all-errors --max-time 10 --connect-timeout 5 "https://github.com/$u.keys"; echo; done | sudo -u isucon sh -c "umask 077; cat >> /home/isucon/.ssh/authorized_keys"'''
+            - 'rm -rf /opt/bench'
   QualifyInstanceIP2:
     Type: AWS::EC2::EIP
     Properties:
@@ -196,14 +187,11 @@ Resources:
         - Key: Name
           Value: nrb2026-3
       UserData:
-        Fn::Base64: !Sub
-          - |
-            #cloud-config
-            runcmd:
-              - 'bash -c ''set -o pipefail; curl -fsS --retry 5 --retry-connrefused --retry-all-errors --max-time 10 --connect-timeout 5 -H "Authorization: Bearer ${SETUP_TOKEN}" "https://api.isunarabe.org/api/setup/authorized_keys" | sudo -u isucon sh -c "umask 077; cat >> /home/isucon/.ssh/authorized_keys"'''
-              - 'sudo INSTANCE_INDEX=2 ISUWARI_PUBLIC_IP="${PUBLIC_IP}" SETUP_TOKEN="${SETUP_TOKEN}" /opt/isuwari/bootstrap.sh'
-          - SETUP_TOKEN: !Ref SetupToken
-            PUBLIC_IP: !Ref QualifyInstanceIP3
+        Fn::Base64: !Sub |
+          #cloud-config
+          runcmd:
+            - 'bash -c ''set -o pipefail; for u in ${GitHubUsers}; do curl -fsS --retry 5 --retry-connrefused --retry-all-errors --max-time 10 --connect-timeout 5 "https://github.com/$u.keys"; echo; done | sudo -u isucon sh -c "umask 077; cat >> /home/isucon/.ssh/authorized_keys"'''
+            - 'rm -rf /opt/bench'
   QualifyInstanceIP3:
     Type: AWS::EC2::EIP
     Properties:

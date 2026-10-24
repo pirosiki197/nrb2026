@@ -211,31 +211,6 @@ mkdir -p "$PAYLOAD_DIR/mitamae/cookbooks/bench/files/opt/bench/fixtures"
 cp "$ROOT/bench/fixtures/initial.zip" \
     "$PAYLOAD_DIR/mitamae/cookbooks/bench/files/opt/bench/fixtures/initial.zip"
 
-echo "==> stage problem.json -> /opt/benchwarmer/problem.json"
-mkdir -p "$PAYLOAD_DIR/mitamae/cookbooks/benchwarmer/files/opt/benchwarmer"
-cp "$ROOT/problem.json" \
-    "$PAYLOAD_DIR/mitamae/cookbooks/benchwarmer/files/opt/benchwarmer/problem.json"
-
-# benchwarmer / isuwari は ../isunarabe2/ workspace から release build して staging する。
-# release artifact が公開された後に GitHub release fetch に切り替える可能性はあるが、
-# 現状は隣接 workspace を直接 build する方が手戻りが少ない。
-ISUNARABE2_DIR="${ISUNARABE2_DIR:-$ROOT/../isunarabe2}"
-test -f "$ISUNARABE2_DIR/Cargo.toml" || {
-    echo "ERROR: ISUNARABE2_DIR not found at $ISUNARABE2_DIR (= ../isunarabe2/Cargo.toml が要る)" >&2
-    exit 1
-}
-echo "==> cargo build --release (benchwarmer + isuwari) in $ISUNARABE2_DIR"
-( cd "$ISUNARABE2_DIR" && cargo build --release --bin benchwarmer --bin isuwari )
-
-echo "==> stage benchwarmer binary -> /opt/benchwarmer/benchwarmer"
-cp "$ISUNARABE2_DIR/target/release/benchwarmer" \
-    "$PAYLOAD_DIR/mitamae/cookbooks/benchwarmer/files/opt/benchwarmer/benchwarmer"
-
-echo "==> stage isuwari binary -> /opt/isuwari/isuwari"
-mkdir -p "$PAYLOAD_DIR/mitamae/cookbooks/isuwari/files/opt/isuwari"
-cp "$ISUNARABE2_DIR/target/release/isuwari" \
-    "$PAYLOAD_DIR/mitamae/cookbooks/isuwari/files/opt/isuwari/isuwari"
-
 echo "==> tar czf build/payload.tar.gz"
 tar czf "$BUILD_DIR/payload.tar.gz" -C "$BUILD_DIR" payload
 
